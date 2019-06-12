@@ -38,7 +38,7 @@ const Router = function(req, res) {
                 body += chunk.toString();
             });
             req.on('end', () => {
-                var fsRes = sFS.write(body);
+                var fsRes = sFS.write(body, 'menu');
                 res.end();
             });
         }

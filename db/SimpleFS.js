@@ -19,7 +19,7 @@ class SimpleFS {
         });
     }
 
-    rf(pathFile) { 
+    rf(pathFile) {
         if(fs.existsSync(pathFile)) {
             return fs.readFileSync(pathFile, 'utf8');
         }
@@ -35,20 +35,31 @@ class SimpleFS {
         return 'File don\'t exist!';
     }
 
-    write(data) {
-        let id = this.id + 1;
+    write(data, id) {
+        if (id == undefined) {
+            id = this.id + 1;
+            this._saveID(id);
+        }
 
         let pathFile = this.BDPath +  id + '.json';
 
-        console.log(pathFile);
+        var json = (data);
 
-        var json = JSON.stringify(data);
+        console.log(json);
 
-        fs.writeFile(pathFile, json, (err) => {
-            if (err) throw err;
-            return 'File saved';
-        });
-        this._saveID(id);
+        if (fs.existsSync(pathFile)) {
+            var fileJson = JSON.parse(fs.readFileSync(pathFile));
+            fileJson[json] = json;
+            fs.writeFile(pathFile, JSON.stringify(fileJson), (err) =>{
+                if (err) throw err;
+                return 'File saved';
+            })
+        } else {
+            fs.writeFile(pathFile, json, (err) => {
+                if (err) throw err;
+                return 'File saved';
+            });
+        }
     }
 
     delete(fileName) {
